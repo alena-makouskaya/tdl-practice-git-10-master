@@ -1,22 +1,20 @@
-import React, { useEffect } from "react";
-
-import "./App.css";
-import { AddItemForm } from "./components/AddItemForm/AddItemForm";
+// @flow
+import * as React from "react";
 import {
   addTodolistTC,
   fetchTodolistsTC,
   TodolistDomainType,
-} from "./state/todolists-reducer";
+} from "../state/todolists-reducer";
+import { AppRootState, useAppDispatch } from "./store";
+import { AddItemForm } from "../components/AddItemForm/AddItemForm";
 import { useSelector } from "react-redux";
-import { AppRootState, useAppDispatch } from "./app/store";
-import { TaskType } from "./api/todolists-api";
-import { TodolistList } from "./features/TodolistList/TodolistList";
+import { TasksStateType } from "../App";
+import { useEffect } from "react";
+import { TodolistList } from "../features/TodolistList/TodolistList";
+import { Login } from "../features/Login/Login";
+type Props = {};
 
-export type TasksStateType = {
-  [key: string]: TaskType[];
-};
-
-const AppWithRedux = React.memo(() => {
+export const TodolistPage = (props: Props) => {
   console.log("App is called");
 
   let dispatch = useAppDispatch();
@@ -43,12 +41,9 @@ const AppWithRedux = React.memo(() => {
       <AddItemForm callBack={addTodolist} />
 
       <>
-      <TodolistList todolists={todolists} tasks={tasks} />
+        <TodolistList todolists={todolists} tasks={tasks} />
 
-      </>
-
+     </>
     </div>
   );
-});
-
-export default AppWithRedux;
+};

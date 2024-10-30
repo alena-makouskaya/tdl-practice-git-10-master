@@ -1,4 +1,5 @@
-import { title } from 'process';
+import { AxiosResponse } from './../../node_modules/axios/index.d';
+import { title } from "process";
 import axios from "axios";
 
 const settings = {
@@ -13,6 +14,11 @@ const instance = axios.create({
   ...settings,
 });
 
+const authAPI = {
+  login() {
+    return instance.get<ResponseType<{ userId: number }>>(`auth/login`);
+  },
+};
 
 // api
 export const todolistAPI = {
@@ -21,7 +27,7 @@ export const todolistAPI = {
   },
 
   createTodolist(title: string) {
-    return instance.post<ResponseType<{ item: TodolistType }>>(`todo-lists`, {
+    return instance.post<{ item: TodolistType }, AxiosResponse<ResponseType<{ item: TodolistType }>>, {title: string}>(`todo-lists`, {
       title,
     });
   },
@@ -38,16 +44,24 @@ export const todolistAPI = {
     return instance.get<GetTasksResponse>(`todo-lists/${todolistId}/tasks`);
   },
 
- createTask(todolistId: string, title: string) {
-    return instance.post<ResponseType<{item: TaskType}>>(`todo-lists/${todolistId}/tasks`, {title});
+  createTask(todolistId: string, title: string) {
+    return instance.post<ResponseType<{ item: TaskType }>>(
+      `todo-lists/${todolistId}/tasks`,
+      { title }
+    );
   },
 
- deleteTask(todolistId: string, taskId: string) {
-    return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
+  deleteTask(todolistId: string, taskId: string) {
+    return instance.delete<ResponseType>(
+      `todo-lists/${todolistId}/tasks/${taskId}`
+    );
   },
 
- updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put<ResponseType<{item: TaskType}>>(`todo-lists/${todolistId}/tasks/${taskId}`,model);
+  updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
+    return instance.put<ResponseType<{ item: TaskType }>>(
+      `todo-lists/${todolistId}/tasks/${taskId}`,
+      model
+    );
   },
 };
 
@@ -76,7 +90,7 @@ export type TaskType = {
   deadline: string;
   addedDate: string;
   order: number;
-//   completed: boolean;
+  //   completed: boolean;
 };
 
 export enum TaskStatuses {
@@ -95,16 +109,16 @@ export enum TaskPriorities {
 }
 
 export type GetTasksResponse = {
-    totalCount: number
-    error: string
-    items: Array<TaskType>
-}
+  totalCount: number;
+  error: string;
+  items: Array<TaskType>;
+};
 
 export type UpdateTaskModelType = {
-    title: string
-    description: string
-    status: number
-    priority: number
-    startDate: string
-    deadline: string
-}
+  title: string;
+  description: string;
+  status: number;
+  priority: number;
+  startDate: string;
+  deadline: string;
+};

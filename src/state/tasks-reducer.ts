@@ -4,7 +4,7 @@ import {
   SetTodolistsActionType,
 } from "./todolists-reducer";
 
-import { TasksStateType } from "../AppWithRedux";
+import { TasksStateType } from "../App";
 
 import {
   TaskType,

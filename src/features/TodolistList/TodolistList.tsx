@@ -7,7 +7,7 @@ import {
   removeTodolistTC,
   TodolistDomainType,
 } from "../../state/todolists-reducer";
-import { TasksStateType } from "../../AppWithRedux";
+import { TasksStateType } from "../../App";
 import { useAppDispatch } from "../../app/store";
 import {
   addTasksTC,
