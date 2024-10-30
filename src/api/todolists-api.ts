@@ -13,6 +13,8 @@ const instance = axios.create({
   ...settings,
 });
 
+
+// api
 export const todolistAPI = {
   getTodolists() {
     return instance.get<Array<TodolistType>>(`todo-lists`);
@@ -47,12 +49,9 @@ export const todolistAPI = {
  updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
     return instance.put<ResponseType<{item: TaskType}>>(`todo-lists/${todolistId}/tasks/${taskId}`,model);
   },
-
-
-
-
 };
 
+// types
 export type TodolistType = {
   id: string;
   title: string;
