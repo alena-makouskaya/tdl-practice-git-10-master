@@ -1,15 +1,15 @@
-import React, { useCallback, useReducer, useState } from "react";
-import logo from "./logo.svg";
+import React from "react";
+
 import "./App.css";
-import { TasksPropsType, Todolist } from "./components/Todolist";
-import { v1 } from "uuid";
-import { title } from "process";
+import { Todolist } from "./components/Todolist";
 import { AddItemForm } from "./components/AddItemForm";
 import {
   addTodolistAC,
   changeTodolistFilterAC,
   editTodolistTitleAC,
+  FilterValueType,
   removeTodolistAC,
+  TodolistDomainType,
   todolistsReducer,
 } from "./state/todolists-reducer";
 import {
@@ -21,17 +21,10 @@ import {
 } from "./state/tasks-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootState } from "./app/store";
-
-export type FilterValueType = "all" | "active" | "completed";
-
-export type TodolistProps = {
-  id: string;
-  title: string;
-  filter: FilterValueType;
-};
+import { TaskStatuses, TaskType } from "./api/todolists-api";
 
 export type TasksStateType = {
-  [key: string]: TasksPropsType[];
+  [key: string]: TaskType[];
 };
 
 const AppWithRedux = React.memo(() => {
@@ -39,7 +32,7 @@ const AppWithRedux = React.memo(() => {
 
   let dispatch = useDispatch();
 
-  const todolists = useSelector<AppRootState, Array<TodolistProps>>(
+  const todolists = useSelector<AppRootState, Array<TodolistDomainType>>(
     (state) => state.todolists
   );
   const tasks = useSelector<AppRootState, TasksStateType>(
@@ -57,8 +50,8 @@ const AppWithRedux = React.memo(() => {
   }, []);
 
   const changeTaskStatus = React.useCallback(
-    (todolistId: string, taskId: string, isDone: boolean) => {
-      let action = ChangeTaskStatusAC(todolistId, taskId, isDone);
+    (todolistId: string, taskId: string, status: TaskStatuses) => {
+      let action = ChangeTaskStatusAC(todolistId, taskId, status);
       dispatch(action);
     },
     []

@@ -1,6 +1,7 @@
-import { title } from "process";
-import { FilterValueType, TodolistProps } from "../AppWithRedux";
 import { v1 } from "uuid";
+import { TodolistType } from "../api/todolists-api";
+
+export type FilterValueType = "all" | "active" | "completed";
 
 export type ChangeTodolistFilterActionType = {
   type: "CHANGE-TODOLIST-FILTER";
@@ -31,12 +32,14 @@ export type ActionType =
   | EditTodolistTitleActionType
   | ChangeTodolistFilterActionType;
 
-let initialState: TodolistProps[] = [];
+export type TodolistDomainType = TodolistType & { filter: FilterValueType };
+
+let initialState: TodolistDomainType[] = [];
 
 export const todolistsReducer = (
-  state: TodolistProps[] = initialState,
+  state: TodolistDomainType[] = initialState,
   action: ActionType
-): TodolistProps[] => {
+): TodolistDomainType[] => {
   switch (action.type) {
     case "REMOVE-TODOLIST": {
       return state.filter((tl) => tl.id !== action.todolistId);
@@ -47,6 +50,8 @@ export const todolistsReducer = (
         {
           id: action.todolistId,
           title: action.title,
+          addedDate: "",
+          order: 0,
           filter: "all",
         },
         ...state,
@@ -54,23 +59,15 @@ export const todolistsReducer = (
     }
 
     case "EDIT-TODOLIST-TITLE": {
-      let todolist = state.find((tl) => tl.id === action.todolistId);
-
-      if (todolist) {
-        todolist.title = action.title;
-      }
-
-      return [...state];
+      return state.map((tl) =>
+        tl.id === action.todolistId ? { ...tl, title: action.title } : tl
+      );
     }
 
     case "CHANGE-TODOLIST-FILTER": {
-      let todolist = state.find((tl) => tl.id === action.todolistId);
-
-      if (todolist) {
-        todolist.filter = action.filter;
-      }
-
-      return [...state];
+      return state.map((tl) =>
+        tl.id === action.todolistId ? { ...tl, filter: action.filter } : tl
+      );
     }
 
     default:
