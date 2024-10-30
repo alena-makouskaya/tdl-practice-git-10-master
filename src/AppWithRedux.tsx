@@ -5,21 +5,25 @@ import { Todolist } from "./components/Todolist";
 import { AddItemForm } from "./components/AddItemForm";
 import {
   addTodolistAC,
+  addTodolistTC,
   changeTodolistFilterAC,
   editTodolistTitleAC,
+  editTodolistTitleTC,
+  fetchTodolistsTC,
   FilterValueType,
   removeTodolistAC,
-  setTodolistsAC,
-  setTodolistsTC,
+  removeTodolistTC,
   TodolistDomainType,
   todolistsReducer,
 } from "./state/todolists-reducer";
 import {
   AddTaskAC,
-  ChangeTaskStatusAC,
-  EditTaskTitleAC,
+  addTasksTC,
+
   RemoveTaskAC,
+  removeTasksTC,
   tasksReducer,
+  updateTaskTC,
 } from "./state/tasks-reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootState, useAppDispatch } from "./app/store";
@@ -42,31 +46,32 @@ const AppWithRedux = React.memo(() => {
   );
 
   useEffect(() => {
-    setTodolistsTC(dispatch)
+    const thunk = fetchTodolistsTC();
+    dispatch(thunk);
   }, []);
 
   const removeTask = React.useCallback((todolistId: string, taskId: string) => {
-    let action = RemoveTaskAC(todolistId, taskId);
-    dispatch(action);
+    const thunk = removeTasksTC(todolistId, taskId);
+    dispatch(thunk);
   }, []);
 
   const addTask = React.useCallback((todolistId: string, title: string) => {
-    let action = AddTaskAC(todolistId, title);
-    dispatch(action);
+    const thunk = addTasksTC(todolistId, title);
+    dispatch(thunk);
   }, []);
 
   const changeTaskStatus = React.useCallback(
     (todolistId: string, taskId: string, status: TaskStatuses) => {
-      let action = ChangeTaskStatusAC(todolistId, taskId, status);
-      dispatch(action);
+      const thunk = updateTaskTC(todolistId, taskId, {status});
+      dispatch(thunk);
     },
     []
   );
 
   const editTaskTitle = React.useCallback(
     (todolistId: string, taskId: string, title: string) => {
-      let action = EditTaskTitleAC(todolistId, taskId, title);
-      dispatch(action);
+      const thunk = updateTaskTC(todolistId, taskId, {title});
+      dispatch(thunk);
     },
     []
   );
@@ -80,19 +85,19 @@ const AppWithRedux = React.memo(() => {
   );
 
   const removeTodolist = React.useCallback((todolistId: string) => {
-    let action = removeTodolistAC(todolistId);
-    dispatch(action);
+    const thunk = removeTodolistTC(todolistId);
+    dispatch(thunk);
   }, []);
 
   const addTodolist = React.useCallback((title: string) => {
-    let action = addTodolistAC(title);
-    dispatch(action);
+    const thunk = addTodolistTC(title);
+    dispatch(thunk);
   }, []);
 
   const editTodolistTitle = React.useCallback(
     (todolistId: string, title: string) => {
-      let action = editTodolistTitleAC(todolistId, title);
-      dispatch(action);
+      const thunk = editTodolistTitleTC(todolistId, title);
+      dispatch(thunk);
     },
     []
   );
