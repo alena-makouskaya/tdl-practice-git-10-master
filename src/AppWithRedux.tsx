@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import "./App.css";
 import { Todolist } from "./components/Todolist";
@@ -9,6 +9,8 @@ import {
   editTodolistTitleAC,
   FilterValueType,
   removeTodolistAC,
+  setTodolistsAC,
+  setTodolistsTC,
   TodolistDomainType,
   todolistsReducer,
 } from "./state/todolists-reducer";
@@ -20,8 +22,8 @@ import {
   tasksReducer,
 } from "./state/tasks-reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { AppRootState } from "./app/store";
-import { TaskStatuses, TaskType } from "./api/todolists-api";
+import { AppRootState, useAppDispatch } from "./app/store";
+import { TaskStatuses, TaskType, todolistAPI } from "./api/todolists-api";
 
 export type TasksStateType = {
   [key: string]: TaskType[];
@@ -30,7 +32,7 @@ export type TasksStateType = {
 const AppWithRedux = React.memo(() => {
   console.log("App is called");
 
-  let dispatch = useDispatch();
+  let dispatch = useAppDispatch();
 
   const todolists = useSelector<AppRootState, Array<TodolistDomainType>>(
     (state) => state.todolists
@@ -38,6 +40,10 @@ const AppWithRedux = React.memo(() => {
   const tasks = useSelector<AppRootState, TasksStateType>(
     (state) => state.tasks
   );
+
+  useEffect(() => {
+    setTodolistsTC(dispatch)
+  }, []);
 
   const removeTask = React.useCallback((todolistId: string, taskId: string) => {
     let action = RemoveTaskAC(todolistId, taskId);

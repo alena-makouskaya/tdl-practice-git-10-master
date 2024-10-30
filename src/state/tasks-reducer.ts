@@ -2,11 +2,18 @@ import {
   addTodolistAC,
   AddTodolistActionType,
   RemoveTodolistActionType,
+  SetTodolistsActionType,
 } from "./todolists-reducer";
 import { v1 } from "uuid";
 import { TasksStateType } from "../AppWithRedux";
 import { title } from "process";
-import { TaskPriorities, TaskStatuses } from "../api/todolists-api";
+import {
+  TaskPriorities,
+  TaskStatuses,
+  TaskType,
+  todolistAPI,
+} from "../api/todolists-api";
+import { Dispatch } from "redux";
 
 export type ChangeTaskStatusActionType = {
   type: "CHANGE-TASK-STATUS";
@@ -34,13 +41,21 @@ export type RemoveTaskActionType = {
   taskId: string;
 };
 
+export type SetTasksActionType = {
+  type: "SET-TASKS";
+  todolistId: string;
+  tasks: Array<TaskType>;
+};
+
 type ActionType =
   | RemoveTaskActionType
   | AddTaskActionType
   | EditTaskTitleActionType
   | ChangeTaskStatusActionType
   | AddTodolistActionType
-  | RemoveTodolistActionType;
+  | RemoveTodolistActionType
+  | SetTodolistsActionType
+  | SetTasksActionType;
 
 let initialState: TasksStateType = {};
 
@@ -52,8 +67,10 @@ export const tasksReducer = (
     case "REMOVE-TASK": {
       return {
         ...state,
-        [action.todolistId]: state[action.todolistId].filter((task) => task.id !== action.taskId)
-      }
+        [action.todolistId]: state[action.todolistId].filter(
+          (task) => task.id !== action.taskId
+        ),
+      };
     }
 
     case "ADD-TASK": {
@@ -109,6 +126,22 @@ export const tasksReducer = (
       return stateCopy;
     }
 
+    case "SET-TODOLISTS": {
+      const stateCopy = { ...state };
+
+      action.todolists.forEach((tl) => {
+        stateCopy[tl.id] = [];
+      });
+
+      return stateCopy;
+    }
+
+    case "SET-TASKS": {
+      const stateCopy = { ...state };
+      stateCopy[action.todolistId] = action.tasks;
+      return stateCopy;
+    }
+
     default:
       return state;
   }
@@ -159,5 +192,25 @@ export const ChangeTaskStatusAC = (
     todolistId,
     taskId,
     status,
+  };
+};
+
+export const SetTasksAC = (
+  todolistId: string,
+  tasks: Array<TaskType>
+): SetTasksActionType => {
+  return {
+    type: "SET-TASKS",
+    todolistId,
+    tasks,
+  };
+};
+
+export const fetchTasksTC = (todolistId: string) => {
+  return (dispatch: Dispatch) => {
+    todolistAPI.getTasks(todolistId).then((res) => {
+      let action = SetTasksAC(todolistId, res.data.items);
+      dispatch(action);
+    });
   };
 };
