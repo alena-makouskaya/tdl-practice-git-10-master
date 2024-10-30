@@ -6,7 +6,9 @@ type AddItemFormPropsType = {
   callBack: (value: string) => void;
 };
 
-export const AddItemForm = (props: AddItemFormPropsType) => {
+export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
+  console.log("AddItemForm is called");
+
   let { callBack } = props;
 
   let [inputValue, setInputValue] = React.useState("");
@@ -48,4 +50,4 @@ export const AddItemForm = (props: AddItemFormPropsType) => {
       {error && <div className="errorText">{error}</div>}
     </div>
   );
-};
+});
